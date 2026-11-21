@@ -1,5 +1,10 @@
 """Démo end-to-end : contenu pilote → viewer → progression EAI."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from desktop.viewer.viewer import EngineeringViewer
 from engineering.architecture.architecture import ArchitectureManager
 from engineering.architecture.pilot_content import load_pilot_architecture
