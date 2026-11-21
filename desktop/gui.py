@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QTabWidget
 
-from desktop.app import EAIDesktopApp
-from desktop.viewer.viewer import EngineeringViewer
+from desktop.viewer.viewer import EngineeringViewer, ProjectProgress
 
 
 class EAIQMainWindow(QMainWindow):
@@ -22,35 +21,35 @@ class EAIQMainWindow(QMainWindow):
         self.summary_label = QLabel()
         layout.addWidget(self.summary_label)
 
-        tabs = QTabWidget()
-        tabs.addTab(self._build_tab("Exigences"), "Exigences")
-        tabs.addTab(self._build_tab("Architecture"), "Architecture")
-        tabs.addTab(self._build_tab("Électronique"), "Électronique")
-        tabs.addTab(self._build_tab("EDA"), "EDA")
-        tabs.addTab(self._build_tab("MCU"), "MCU")
-        tabs.addTab(self._build_tab("Firmware"), "Firmware")
-        tabs.addTab(self._build_tab("Simulation"), "Simulation")
-        tabs.addTab(self._build_tab("Tests"), "Tests")
-        tabs.addTab(self._build_tab("Fabrication"), "Fabrication")
-        layout.addWidget(tabs)
+        self.tabs = QTabWidget()
+        self.tab_labels: dict[str, QLabel] = {}
+        self.tab_labels["Exigences"] = self._build_tab("Exigences")
+        self.tab_labels["Architecture"] = self._build_tab("Architecture")
+        self.tab_labels["Électronique"] = self._build_tab("Électronique")
+        self.tab_labels["EDA"] = self._build_tab("EDA")
+        self.tab_labels["MCU"] = self._build_tab("MCU")
+        self.tab_labels["Firmware"] = self._build_tab("Firmware")
+        self.tab_labels["Simulation"] = self._build_tab("Simulation")
+        self.tab_labels["Tests"] = self._build_tab("Tests")
+        self.tab_labels["Fabrication"] = self._build_tab("Fabrication")
 
+        layout.addWidget(self.tabs)
         self.setCentralWidget(central)
         self.refresh()
 
-    def _build_tab(self, key: str) -> QWidget:
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
+    def _build_tab(self, key: str) -> QLabel:
         label = QLabel(f"[stub] Vue {key} pour le projet {self.project_id}")
-        layout.addWidget(label)
-        return widget
+        return label
 
     def refresh(self) -> None:
         """Rafraîchit les vues à partir du viewer."""
-        progress = self.viewer.view(self.project_id)
+        progress: ProjectProgress = self.viewer.view(self.project_id)
         self.summary_label.setText(
             f"Projet {progress.project_id} — {len(progress.requirements)} exigence(s), "
             f"{progress.architecture_blocks} bloc(s) architectural(aux)."
         )
+        for key, label in self.tab_labels.items():
+            label.setText(f"[stub] Vue {key} pour le projet {self.project_id}")
 
 
 def run_app(project_id: str, viewer: EngineeringViewer | None = None) -> int:
