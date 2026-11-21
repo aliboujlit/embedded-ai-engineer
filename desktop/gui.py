@@ -1,0 +1,61 @@
+"""Interface graphique PyQt6 — QMainWindow avec onglets de visualisation."""
+
+from __future__ import annotations
+
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel, QTabWidget
+
+from desktop.app import EAIDesktopApp
+from desktop.viewer.viewer import EngineeringViewer
+
+
+class EAIQMainWindow(QMainWindow):
+    """Fenêtre principale EAI avec onglets de visualisation par domaine."""
+
+    def __init__(self, project_id: str, viewer: EngineeringViewer) -> None:
+        super().__init__()
+        self.project_id = project_id
+        self.viewer = viewer
+        self.setWindowTitle(f"EAI — {project_id}")
+
+        central = QWidget()
+        layout = QVBoxLayout(central)
+        self.summary_label = QLabel()
+        layout.addWidget(self.summary_label)
+
+        tabs = QTabWidget()
+        tabs.addTab(self._build_tab("Exigences"), "Exigences")
+        tabs.addTab(self._build_tab("Architecture"), "Architecture")
+        tabs.addTab(self._build_tab("Électronique"), "Électronique")
+        tabs.addTab(self._build_tab("EDA"), "EDA")
+        tabs.addTab(self._build_tab("MCU"), "MCU")
+        tabs.addTab(self._build_tab("Firmware"), "Firmware")
+        tabs.addTab(self._build_tab("Simulation"), "Simulation")
+        tabs.addTab(self._build_tab("Tests"), "Tests")
+        tabs.addTab(self._build_tab("Fabrication"), "Fabrication")
+        layout.addWidget(tabs)
+
+        self.setCentralWidget(central)
+        self.refresh()
+
+    def _build_tab(self, key: str) -> QWidget:
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        label = QLabel(f"[stub] Vue {key} pour le projet {self.project_id}")
+        layout.addWidget(label)
+        return widget
+
+    def refresh(self) -> None:
+        """Rafraîchit les vues à partir du viewer."""
+        progress = self.viewer.view(self.project_id)
+        self.summary_label.setText(
+            f"Projet {progress.project_id} — {len(progress.requirements)} exigence(s), "
+            f"{progress.architecture_blocks} bloc(s) architectural(aux)."
+        )
+
+
+def run_app(project_id: str, viewer: EngineeringViewer | None = None) -> int:
+    """Point d'entrée applicatif EAI Desktop."""
+    app = QApplication([])
+    window = EAIQMainWindow(project_id=project_id, viewer=viewer or EngineeringViewer())
+    window.show()
+    return app.exec()
