@@ -48,8 +48,18 @@ class EAIQMainWindow(QMainWindow):
             f"Projet {progress.project_id} — {len(progress.requirements)} exigence(s), "
             f"{progress.architecture_blocks} bloc(s) architectural(aux)."
         )
-        for key, label in self.tab_labels.items():
-            label.setText(f"[stub] Vue {key} pour le projet {self.project_id}")
+
+        self.tab_labels["Exigences"].setText(
+            f"Exigences : {', '.join(progress.requirements) if progress.requirements else 'Aucune'}"
+        )
+        self.tab_labels["Architecture"].setText(f"Blocs architecturaux : {progress.architecture_blocks}")
+        self.tab_labels["Électronique"].setText(f"Conception électronique : {progress.electronics}")
+        self.tab_labels["EDA"].setText(f"Conception EDA : {progress.eda}")
+        self.tab_labels["MCU"].setText(f"Configuration MCU : {progress.mcu}")
+        self.tab_labels["Firmware"].setText(f"Firmware : {progress.firmware}")
+        self.tab_labels["Simulation"].setText(f"Simulation : {progress.simulation}")
+        self.tab_labels["Tests"].setText(f"Tests : {progress.testing}")
+        self.tab_labels["Fabrication"].setText(f"Fabrication : {progress.manufacturing}")
 
 
 def run_app(project_id: str, viewer: EngineeringViewer | None = None) -> int:
