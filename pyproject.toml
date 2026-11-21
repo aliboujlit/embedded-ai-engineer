@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eai"
+version = "0.1.0"
+description = "Plateforme d'ingénierie électronique et de systèmes embarqués assistée par intelligence artificielle locale"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "EMBEDDED AI ENGINEER" }]
+dependencies = [
+    "PyQt6>=6.7",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "llama-cpp-python>=0.2.0",
+    "torch>=2.1.0",
+    "scikit-learn>=1.5.0",
+    "faiss-cpu>=1.7.4",
+    "chromadb>=0.5.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.0.0",
+    "ruff>=0.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
